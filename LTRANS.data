@@ -211,7 +211,7 @@ $end
 $output
 
   !NOTE: Full path must already exist.  Model can create files, but not directories.
-  outpath = './output/'      ! Location to write output .csv and/or .nc files
+  outpath = 'output/'      ! Location to write output .csv and/or .nc files
                              ! Use outpath = './' to write in same folder as the executable
   NCOutFile = 'output'       ! Name of the NetCDF output files (do not include .nc)
   outpathGiven = .TRUE.      ! If TRUE files are written to the path given in outpath
