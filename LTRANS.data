@@ -9,7 +9,7 @@
 $numparticles
 
   numpar = 608               ! Number of particles (total number for whole simulation)
-                             ! numpar should equal the number of rows in the particle 
+                             ! numpar should equal the number of rows in the particle
                              ! locations input file
 $end
 
@@ -20,7 +20,7 @@ $timeparam
 
   days   = 4.5               ! Number of days to run the model
   iprint = 3600              ! Print interval for LTRANS output (s); 3600 = every hour
-  dt     = 3600              ! External time step (duration between hydro model predictions) (s) 
+  dt     = 3600              ! External time step (duration between hydro model predictions) (s)
   idt    = 120               ! Internal (particle tracking) time step (s)
 
 $end
@@ -49,11 +49,11 @@ $hydroparam
   constV     = 0.0           ! Constant value for V if readV is .FALSE.
   readW      = .TRUE.        ! If .TRUE. read in w-momentum component (W   ) from NetCDF file, else use constW
   constW     = 0.0           ! Constant value for W if readW is .FALSE.
-  readAks    = .TRUE.        ! If .TRUE. read in salinity vertical diffusion coefficient (Aks ) from NetCDF file, else 
+  readAks    = .TRUE.        ! If .TRUE. read in salinity vertical diffusion coefficient (Aks ) from NetCDF file, else
                              ! use constAks
   constAks   = 0.0           ! Constant value for Aks if readAks is .FALSE.
   readDens   = .TRUE.
-  constDens  = 0.0 
+  constDens  = 0.0
 
 
 $end
@@ -75,34 +75,34 @@ $end
 $behavparam
 
   Behavior = 4               ! Behavior type (specify a number)
-                             !   Note: The behavior types numbers are: 
-                             !     0 Passive, 1 near-surface, 2 near-bottom, 3 DVM, 
-                             !     4 C.virginica oyster larvae, 5 C.ariakensis oyster larvae, 
+                             !   Note: The behavior types numbers are:
+                             !     0 Passive, 1 near-surface, 2 near-bottom, 3 DVM,
+                             !     4 C.virginica oyster larvae, 5 C.ariakensis oyster larvae,
                              !     6 constant, 7 Tidal Stream Transport
-  OpenOceanBoundary = .TRUE. ! Note: If you want to allow particles to "escape" via open ocean 
-                             !   boundaries, set this to TRUE; Escape means that the particle 
+  OpenOceanBoundary = .TRUE. ! Note: If you want to allow particles to "escape" via open ocean
+                             !   boundaries, set this to TRUE; Escape means that the particle
                              !   will stick to the boundary and stop moving
   mortality = .TRUE.         ! TRUE if particles can die; else FALSE
   deadage = 367200           ! Age at which a particle stops moving (i.e., dies) (s)
                              !   Note: deadage stops particle motion for all behavior types
   pediage = 302400           ! Age when particle reaches max swim speed and can settle (s)
-  	                        ! Note: for oyster larvae behavior types (4 & 5), 
+  	                        ! Note: for oyster larvae behavior types (4 & 5),
                              !     pediage = age at which a particle becomes a pediveliger
-                             !   Note: pediage does not cause particles to settle if 
+                             !   Note: pediage does not cause particles to settle if
                              !     the Settlement module is not on
   swimstart = 0.0            ! Age that swimming or sinking begins (s) 1 day = 1.*24.*3600.
   swimslow  = 0.005          ! Swimming speed when particle begins to swim (m/s)
   swimfast  = 0.005          ! Maximum swimming speed (m/s)  0.05 m/s for 5 mm/s
-                             !   Note: for constant swimming speed for behavior types 1,2 & 3, 
+                             !   Note: for constant swimming speed for behavior types 1,2 & 3,
                              !     set swimslow = swimfast = constant speed
   Sgradient = 1.0            ! Salinity gradient threshold that cues larval behavior (psu/m)
-                             !   Note: This parameter is only used if Behavior = 4 or 5. 
+                             !   Note: This parameter is only used if Behavior = 4 or 5.
   sink      = -0.0003        ! Sinking velocity for behavior type 6
                              !   Note: This parameter is only used if Behavior = 6.
 
 ! Tidal Stream Transport behavior type:
   Hswimspeed = 0.9           ! Horizontal swimming speed (m/s)
-  Swimdepth  = 2             ! Depth at which fish swims during flood time 
+  Swimdepth  = 2             ! Depth at which fish swims during flood time
                              ! in meters above bottom (this should be a positive value
                              ! Note: this formulation may need some work
 
@@ -113,7 +113,7 @@ $end
 !*** DVM. The following are parameters for the Diurnal Vertical Migration (DVM) behavior type ***
 !  Note: These values were calculated for September 1 at the latitude of 37.0 (Chesapeake Bay mouth)
 !  Note: Variables marked with ** were calculated with light_v2BlueCrab.f (not included in LTRANS yet)
-!  Note: These parameters are only used if Behavior = 3 
+!  Note: These parameters are only used if Behavior = 3
 $dvmparam
 
   twistart  = 4.801821       ! Time of twilight start (hr) **
@@ -132,7 +132,7 @@ $settleparam
 
  settlementon = .TRUE.      ! settlement module on (.TRUE.) or off (.FALSE.)
                              ! Note: If settlement is off: set minholeid, maxholeid, minpolyid,
-                             !   maxpolyid, pedges, & hedges to 1 
+                             !   maxpolyid, pedges, & hedges to 1
                              !   to avoid both wasted variable space and errors due to arrays of size 0.
                              ! If settlement is on and there are no holes: set minholeid,
                              !   maxholeid, and hedges to 1
@@ -153,18 +153,18 @@ $convparam
 
   PI = 3.14159265358979      ! Pi
   Earth_Radius = 6378000     ! Equatorial radius of Earth (m)
-  SphericalProjection = .TRUE.  ! Spherical Projection from ROMS if TRUE. If FALSE, mercator projection is used. 
+  SphericalProjection = .TRUE.  ! Spherical Projection from ROMS if TRUE. If FALSE, mercator projection is used.
   latmin = 36                ! Minimum longitude value, only used if SphericalProjection is .TRUE.
   lonmin = -77              ! Minimum  latitude value, only used if SphericalProjection is .TRUE.
 $end
 
 
 
-!*** INPUT FILE NAME AND LOCATION PARAMETERS ***; 
+!*** INPUT FILE NAME AND LOCATION PARAMETERS ***;
 ! ** ROMS NetCDF Model Grid file **
   !Note: the path to the file is necessary if the file is not in the same folder as the code
   !Note: if .nc file in separate folder in Linux, then include path. For example:
-  !      NCgridfile = '/share/enorth/CPB_GRID_wUV.nc' 
+  !      NCgridfile = '/share/enorth/CPB_GRID_wUV.nc'
   !Note: if .nc file in separate folder in Windows, then include path. For example:
   !      NCgridfile = 'D:\ROMS\CPB_GRID_wUV.nc'
 $romsgrid
@@ -172,16 +172,15 @@ $romsgrid
 
 $end
 
-
 ! ** ROMS Predictions NetCDF Input (History) File **
   !Filename = prefix + filenum + suffix
   !Note: the path to the file is necessary if the file is not in the same folder as the code
   !Note: if .nc file in separate folder in Windows, then include path in prefix. For example:
-  !      prefix='D:\ROMS\y95hdr_'   
+  !      prefix='D:\ROMS\y95hdr_'
   !      if .nc file in separate folder in Linux, then include path in prefix. For example:
-  !      prefix='/share/lzhong/1995/y95hdr_'   
+  !      prefix='/share/lzhong/1995/y95hdr_'
 $romsoutput
-  prefix='./input/clipped_macroms_his_'   ! NetCDF Input Filename prefix                     
+  prefix='./input/clipped_macroms_his_'   ! NetCDF Input Filename prefix
   suffix='.nc'               ! NetCDF Input Filename suffix
   filenum = 3                ! Number in first NetCDF input filename
   numdigits = 4              ! Number of digits in number portion of file name (with leading zeros)
@@ -193,7 +192,7 @@ $end
   !Note: the path to the file is necessary if the file is not in the same folder as the code
 $parloc
 
-  parfile  = './input/Initial_particle_locations.csv'    !Particle locations 
+  parfile  = './input/Initial_particle_locations.csv'    !Particle locations
 
 $end
 
@@ -212,7 +211,7 @@ $end
 $output
 
   !NOTE: Full path must already exist.  Model can create files, but not directories.
-  outpath = './output/'      ! Location to write output .csv and/or .nc files  
+  outpath = './output/'      ! Location to write output .csv and/or .nc files
                              ! Use outpath = './' to write in same folder as the executable
   NCOutFile = 'output'       ! Name of the NetCDF output files (do not include .nc)
   outpathGiven = .TRUE.      ! If TRUE files are written to the path given in outpath
@@ -233,17 +232,17 @@ $end
 
 
 
-!*** OTHER PARAMETERS *** 
+!*** OTHER PARAMETERS ***
 $other
 
   seed         = 9           ! Seed value for random number generator (Mersenne Twister)
   ErrorFlag    = 0           ! What to do if an error is encountered: 0=stop, 1=return particle to previous location,
-                             ! 2=kill particle & stop tracking that particle, 3=set particle out of bounds & 
+                             ! 2=kill particle & stop tracking that particle, 3=set particle out of bounds &
                              ! stop tracking that particle
                              ! Note: Options 1-3 will output information to ErrorLog.txt
                              ! Note: This is only for particles that travel out of bounds illegally
   BoundaryBLNs = .TRUE.      ! Create Surfer Blanking Files of boundaries? .TRUE.=yes, .FALSE.=no
-  SaltTempOn   = .FALSE.     ! Calculate salinity and temperature at particle 
+  SaltTempOn   = .FALSE.     ! Calculate salinity and temperature at particle
         	                  ! location: yes (.TRUE.) or no (.FALSE.)
   TrackCollisions  = .FALSE. ! Write Bottom and Land Hit Files? .TRUE.=yes, .FALSE.=no
   WriteHeaders     = .TRUE.  ! Write .txt files with column headers? .TRUE.=yes, .FALSE.=no
@@ -254,4 +253,3 @@ $other
   FreeSlip = .FALSE.         ! enable the use of the free slip condition
 
 $end
-
