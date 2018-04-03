@@ -774,7 +774,7 @@ contains
     28 FORMAT ('Particle ',I10,' jumped over u element after ',I10,' seconds')
     29 FORMAT ('Particle ',I10,' jumped over v element after ',I10,' seconds')
 
-    !OMP PARALLEL DO PRIVATE(par)
+
     DO n=1,numpar
 
       IF(WriteModelTiming) call CPU_TIME(times(2))
@@ -1398,13 +1398,12 @@ contains
       ENDIF
 
     ENDDO !end loop for each particle
-    !OMP END PARALLEL DO
 
     ! *********************************************************
     ! *               Update particle locations               *
     ! *********************************************************
 
-    !$OMP PARALLEL DO
+    !
     do n=1,numpar
       par(n,ppX) = par(n,pX)
       par(n,ppY) = par(n,pY)
@@ -1413,7 +1412,7 @@ contains
       par(n,pY)  = par(n,pnY)
       par(n,pZ)  = par(n,pnZ)
     enddo
-    !$OMP END PARALLEL DO
+    !
 
     DEALLOCATE(Pwc_zb,Pwc_zc,Pwc_zf)
     DEALLOCATE(Pwc_wzb,Pwc_wzc,Pwc_wzf)
