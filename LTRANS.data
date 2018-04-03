@@ -216,7 +216,7 @@ $output
   NCOutFile = 'output'       ! Name of the NetCDF output files (do not include .nc)
   outpathGiven = .TRUE.      ! If TRUE files are written to the path given in outpath
   writeCSV     = .TRUE.      ! If TRUE write CSV output files
-  writeNC      = .FALSE.     ! If TRUE write .NC output files
+  writeNC      = .TRUE.     ! If TRUE write .NC output files
   NCtime       = 0           ! Time interval between creation of new NetCDF output files (seconds)
                              ! Note: setting this to 0 will result in just one large output file
 

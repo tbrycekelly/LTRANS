@@ -26,7 +26,7 @@ ifdef IFORT_UMCES
   FC = ifort
   NETCDF_INCDIR = /opt/hpc/intel12/include
   NETCDF_LIBDIR = /opt/hpc/intel12/lib
-  FFLAGS = -vec-report0 -fp-model precise -mcmodel=medium -I$(NETCDF_INCDIR)
+  FFLAGS = -vec-report0 -fp-model precise -mcmodel=medium -I$(NETCDF_INCDIR) -openmp
 endif
 
 ifdef GFORTRAN_UMCES
