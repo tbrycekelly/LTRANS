@@ -2,16 +2,14 @@
 !This file defines many variables that are read from the GRID.data and LTRANS.data files
 !And also groups the input parameters/variables into namelists
 !
-!NOTE: variables in a namelist can NOT be dynamic variables!!!!! 
+!NOTE: variables in a namelist can NOT be dynamic variables!!!!!
 !      dynamic namelists are NOT yet supported in FORTRAN90/95 standard
-!
-!Basically, this file replaces GRID.inc and LTRANS.inc in previous code
 !
 
 !--these are the grid dimension definitions, they should read from GRID.data
 
   INTEGER :: ui                     ! number u points in x direction
-  INTEGER :: uj                     !        u           y 
+  INTEGER :: uj                     !        u           y
   INTEGER :: vi                     !        v           x
   INTEGER :: vj                     !        v           y
 
@@ -19,40 +17,34 @@
   INTEGER :: u_nodes                ! number of u nodes
   INTEGER :: v_nodes                ! number of v nodes
 
-  INTEGER :: max_rho_elements       ! total number of rho elements 
+  INTEGER :: max_rho_elements       ! total number of rho elements
   INTEGER :: max_u_elements         ! total number of u elements
   INTEGER :: max_v_elements         ! total           v
 
   INTEGER :: rho_elements           ! number of rho elements with at least 1 vertex is water
-  INTEGER :: u_elements             !            u 
+  INTEGER :: u_elements             !            u
   INTEGER :: v_elements             !            v
 
 !group the grid info section in a namelist:
 
   namelist/gridinfo/ ui, uj, vi, vj,rho_nodes, u_nodes, v_nodes,     &
      &               max_rho_elements,max_u_elements,max_v_elements, &
-     &               rho_elements, u_elements, v_elements         
-
-
+     &               rho_elements, u_elements, v_elements
 
 
 
 !The following used to be in LTRANS.inc:
-
-
 !*** NUMBER OF PARTICLES ***
 
   INTEGER :: numpar
-
   namelist/numparticles/numpar      ! Number of particles
-
 
 
 !*** TIME PARAMETERS ***
 
   REAL             :: days          ! Number of days to run the model
   INTEGER          :: iprint        ! Print interval for LTRANS output (s); 3600 = every hour
-  INTEGER          :: dt            ! External time step (duration between hydro model predictions) (s) 
+  INTEGER          :: dt            ! External time step (duration between hydro model predictions) (s)
   INTEGER          :: idt           ! Internal (particle tracking) time step (s)
 
   namelist/timeparam/ days,iprint,dt,idt
@@ -101,12 +93,12 @@
 
 !*** BEHAVIOR MODULE PARAMETERS ***
   INTEGER :: Behavior               ! Behavior type (specify a number)
-                                    !   Note: The behavior types numbers are: 
-                                    !     0 Passive, 1 near-surface, 2 near-bottom, 3 DVM, 
-                                    !     4 C.virginica oyster larvae, 5 C.ariakensis oyster larvae, 
+                                    !   Note: The behavior types numbers are:
+                                    !     0 Passive, 1 near-surface, 2 near-bottom, 3 DVM,
+                                    !     4 C.virginica oyster larvae, 5 C.ariakensis oyster larvae,
                                     !     6 constant, 7 Tidal Stream Transport)
-  LOGICAL :: OpenOceanBoundary      ! Note: If you want to allow particles to "escape" via open ocean 
-                                    !   boundaries, set this to TRUE; Escape means that the particle 
+  LOGICAL :: OpenOceanBoundary      ! Note: If you want to allow particles to "escape" via open ocean
+                                    !   boundaries, set this to TRUE; Escape means that the particle
                                     !   will stick to the boundary and stop moving
   LOGICAL :: mortality              ! TRUE if particles can die; else FALSE
   DOUBLE PRECISION :: deadage       ! Age at which a particle stops moving (i.e., dies) (s)
@@ -118,17 +110,16 @@
   DOUBLE PRECISION :: swimstart     ! Age that swimming or sinking begins (s) 1 day = 1.*24.*3600.
   DOUBLE PRECISION :: swimslow      ! Swimming speed when particle begins to swim (m/s)
   DOUBLE PRECISION :: swimfast      ! Maximum swimming speed (m/s)  0.05 m/s for 5 mm/s
-                                    !   Note: for constant swimming speed for behavior types 1,2 & 3: 
+                                    !   Note: for constant swimming speed for behavior types 1,2 & 3:
                                     !     set swimslow = swimfast = constant speed
   DOUBLE PRECISION :: Sgradient     ! Salinity gradient threshold that cues larval behavior (psu/m)
-                                    !   Note: This parameter is only used if Behavior = 4 or 5. 
+                                    !   Note: This parameter is only used if Behavior = 4 or 5.
   DOUBLE PRECISION :: sink          ! Sinking velocity for behavior type 6
                                     !   Note: This parameter is only used if Behavior = 6.
 ! Tidal Stream Transport behavior type:
   DOUBLE PRECISION :: Hswimspeed    ! Horizontal swimming speed (m/s)
-  DOUBLE PRECISION :: Swimdepth     ! Depth at which fish swims during flood time 
+  DOUBLE PRECISION :: Swimdepth     ! Depth at which fish swims during flood time
                                     ! in meters above bottom (this should be a positive value)
-
 
   namelist/behavparam/Behavior,OpenOceanBoundary,mortality,deadage,pediage,swimstart,swimslow,swimfast,Sgradient,sink,Hswimspeed,Swimdepth
 
@@ -143,7 +134,7 @@
   DOUBLE PRECISION :: thresh        ! Light threshold that cues behavior (microE m^-2 s^-1)
   !  Note: These values were calculated for September 1 at the latitude of 37.0 (Chesapeake Bay mouth)
   !  Note: Variables marked with ** were calculated with light_v2BlueCrab.f (not included in LTRANS yet)
-  !  Note: These parameters are only used if Behavior = 3 
+  !  Note: These parameters are only used if Behavior = 3
 
   namelist/dvmparam/twistart,twiend,daylength,Em,Kd,thresh
 
@@ -177,35 +168,30 @@
 
 
 
-!*** INPUT FILE NAME AND LOCATION PARAMETERS ***; 
+!*** INPUT FILE NAME AND LOCATION PARAMETERS ***;
 
-!  ** ROMS NetCDF Model Grid file **
+!  ** Model NetCDF Model Grid file **
   CHARACTER(LEN=200) :: NCgridfile
     !Note: the path to the file is necessary if the file is not in the same folder as the code
     !Note: if .nc file in separate folder in Linux, then include path. For example:
-    !      CHARACTER(LEN=29), PARAMETER :: NCgridfile = '/share/enorth/CPB_GRID_wUV.nc' 
+    !      CHARACTER(LEN=29), PARAMETER :: NCgridfile = '/share/enorth/CPB_GRID_wUV.nc'
     !Note: if .nc file in separate folder in Windows, then include path. For example:
     !      CHARACTER(LEN=23), PARAMETER :: NCgridfile = 'D:\ROMS\CPB_GRID_wUV.nc'
 
-  namelist/romsgrid/NCgridfile
+  namelist/modelgrid/NCgridfile
 
 
 
-!  ** ROMS Predictions NetCDF Input File **
+!  ** Model Predictions NetCDF Input File **
 !  Filename = prefix + filenum + suffix
+  INTEGER :: modeltype              ! TBK
   CHARACTER(LEN=200) :: prefix      ! NetCDF Input Filename prefix
   CHARACTER(LEN=200) :: suffix      ! NetCDF Input Filename suffix
   INTEGER :: filenum                ! Number in First NetCDF Input Filename
   INTEGER :: numdigits              ! Number of digits in number portion of file name (with leading zeros)
   LOGICAL :: startfile              ! .TRUE. means the first file has an additional time step
-  !Note: the path to the file is necessary if the file is not in the same folder as the code
-  !Note: if .nc file in separate folder in Windows, then include path in prefix. For example:
-  !      CHARACTER(LEN=15), PARAMETER :: prefix='D:\ROMS\y95hdr_'   
-  !      if .nc file in separate folder in Linux, then include path in prefix. For example:
-  !      CHARACTER(LEN=26), PARAMETER :: prefix='/share/lzhong/1995/y95hdr_'   
 
-  namelist/romsoutput/prefix,suffix,filenum,numdigits,startfile
-
+  namelist/modeloutput/modeltype,prefix,suffix,filenum,numdigits,startfile
 
 
 
@@ -248,13 +234,13 @@
 
 
 
-!*** OTHER PARAMETERS *** 
+!*** OTHER PARAMETERS ***
   INTEGER :: seed                   ! Seed value for random number generator (Mersenne Twister)
   INTEGER :: ErrorFlag              ! What to do if an error is encountered: 0=stop, 1=return particle to previous location
                                     ! 2=kill particle & stop tracking, 3=set particle out of bounds & stop tracking
 									! Note: Options 1-3 will output information to ErrorLog.txt
   LOGICAL :: BoundaryBLNs           ! Create Surfer Blanking Files of boundaries? .TRUE.=yes, .FALSE.=no
-  LOGICAL :: SaltTempOn             ! Calculate salinity and temperature at particle 
+  LOGICAL :: SaltTempOn             ! Calculate salinity and temperature at particle
                                     ! location: yes (.TRUE.) or no (.FALSE.)
   LOGICAL :: TrackCollisions        ! Write Bottom and Land Hit Files? .TRUE.=yes, .FALSE.=no
   LOGICAL :: WriteHeaders           ! Write .txt files with column headers? .TRUE.=yes, .FALSE.=no

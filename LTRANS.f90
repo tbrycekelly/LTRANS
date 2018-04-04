@@ -125,6 +125,7 @@ IMPLICIT NONE
   INTEGER :: prcount,printdt,p,it
   REAL :: timeCounts(8),times(9)
 
+  write(*,*) 'Starting...'
 !   *************************************************************************
 !   *                                                                       *
 !   *                             Execution                                 *
@@ -193,7 +194,6 @@ contains
   ! ***************************************************************************
   ! *                          Get Parameter Values                           *
   ! ***************************************************************************
-
     CALL getParams()
 
     CALL writeModelInfo()

@@ -1,17 +1,17 @@
-MODULE PARAM_MOD 
- 
-!  The Parameter Module reads in the include file, LTRANS.data, making the 
-!  parameters declared within available to all the other modules. It also 
+MODULE PARAM_MOD
+
+!  The Parameter Module reads in the include file, LTRANS.data, making the
+!  parameters declared within available to all the other modules. It also
 !  reads in information from the NetCDF grid file and calculates values of
 !  grid specific parameters, making them available to all the other modules.
-! 
-!  Created by:            Zachary Schlag 
-!  Created on:            28 Jul 2008 
+!
+!  Created by:            Zachary Schlag
+!  Created on:            28 Jul 2008
 !  Last Modified on:         Feb 2013
- 
-IMPLICIT NONE 
-PUBLIC 
-SAVE 
+
+IMPLICIT NONE
+PUBLIC
+SAVE
 
   include 'LTRANS.h'
 
@@ -19,8 +19,7 @@ CONTAINS
 
 
   SUBROUTINE getParams()
-  !Subroutine to read all input parameters from LTRANS.data 
-
+  !Subroutine to read all input parameters from LTRANS.data
     character(len=120) :: header
     integer :: istat,err
 
@@ -30,6 +29,26 @@ CONTAINS
       IF(err == 0) THEN
         READ(1,nml=numparticles ,IOSTAT=istat)  !--- number of particles
         IF(istat/=0)err = 10
+      ENDIF
+      IF(err == 0) THEN
+        READ(1,nml=modelgrid     ,IOSTAT=istat)  !--- model grid - TBK
+        IF(istat/=0)err = 90
+      ENDIF
+      IF(err == 0) THEN
+        READ(1,nml=modeloutput   ,IOSTAT=istat)  !--- model history output file - TBK
+        IF(istat/=0)err = 100
+      ENDIF
+      IF(err == 0) THEN
+        READ(1,nml=parloc       ,IOSTAT=istat)  !--- particle locations
+        IF(istat/=0)err = 110
+      ENDIF
+      IF(err == 0) THEN
+        READ(1,nml=output       ,IOSTAT=istat)  !--- output related info
+        IF(istat/=0)err = 130
+      ENDIF
+      IF(err == 0) THEN
+        READ(1,nml=HabPolyLoc   ,IOSTAT=istat)  !--- habitat polygon info
+        IF(istat/=0)err = 120
       ENDIF
       IF(err == 0) THEN
         READ(1,nml=timeparam    ,IOSTAT=istat)  !--- time info
@@ -48,7 +67,7 @@ CONTAINS
         IF(istat/=0)err = 50
       ENDIF
       IF(err == 0) THEN
-        READ(1,nml=dvmparam     ,IOSTAT=istat)  !--- diurnal vertical migration 
+        READ(1,nml=dvmparam     ,IOSTAT=istat)  !--- diurnal vertical migration
         IF(istat/=0)err = 60
       ENDIF
       IF(err == 0) THEN
@@ -60,27 +79,7 @@ CONTAINS
         IF(istat/=0)err = 80
       ENDIF
       IF(err == 0) THEN
-        READ(1,nml=romsgrid     ,IOSTAT=istat)  !--- roms grid
-        IF(istat/=0)err = 90
-      ENDIF
-      IF(err == 0) THEN
-        READ(1,nml=romsoutput   ,IOSTAT=istat)  !--- roms history output file
-        IF(istat/=0)err = 100
-      ENDIF
-      IF(err == 0) THEN
-        READ(1,nml=parloc       ,IOSTAT=istat)  !--- particle locations
-        IF(istat/=0)err = 110
-      ENDIF
-      IF(err == 0) THEN
-        READ(1,nml=HabPolyLoc   ,IOSTAT=istat)  !--- habitat polygon info
-        IF(istat/=0)err = 120
-      ENDIF
-      IF(err == 0) THEN
-        READ(1,nml=output       ,IOSTAT=istat)  !--- output related info
-        IF(istat/=0)err = 130
-      ENDIF
-      IF(err == 0) THEN
-        READ(1,nml=other        ,IOSTAT=istat)  !--- other misc 
+        READ(1,nml=other        ,IOSTAT=istat)  !--- other misc
         IF(istat/=0)err = 140
       ENDIF
     CLOSE(1)
@@ -90,6 +89,7 @@ CONTAINS
       IF(istat/=0)err = 150
     ENDIF
 
+    ! Rearranged order of checks for my own custom LTRANS.data order - TBK
     SELECT CASE(err)
       CASE(0)
         header='No Errors'
@@ -140,7 +140,7 @@ CONTAINS
     IMPLICIT NONE
     CHARACTER(LEN=120), INTENT(IN) :: header
     INTEGER, INTENT(IN) :: flag
-   
+
     IF (flag .eq. -1) THEN
       WRITE(*,"(A120)")header               !print error message in report.txt
       STOP
@@ -148,7 +148,7 @@ CONTAINS
       WRITE(*,"('***** WARNING *****')")    !print warning message to screen
       WRITE(*,"(A120)")header
     ENDIF
-   
+
   END SUBROUTINE errorHandler
 
 
@@ -169,6 +169,7 @@ CONTAINS
     INTEGER :: STATUS,GF_ID,VID,dimid,dimcount
     INTEGER :: xi_rho,xi_u,xi_v,eta_rho,eta_u,eta_v
     REAL, ALLOCATABLE, DIMENSION(:,:) :: mask_rho,mask_u,mask_v
+    !Todo: Add MITgcm varaibles - TBK
 
     !Grid File Output Variables
     INTEGER :: nR,nU,nV,maxR,maxU,maxV,wetR,wetU,wetV
@@ -190,11 +191,13 @@ CONTAINS
 
     ! GET VALUES FOR xi_rho,xi_u,xi_v,eta_rho,eta_u,eta_v
 
+    if (MODELTYPE .EQ. 1) then ! ROMS specific grid setup - TBK
+
       STATUS = NF90_INQ_DIMID(GF_ID,'xi_rho',dimid)
       STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
       if (STATUS .NE. NF90_NOERR) then
         write(*,*) 'Problem dimid xi_rho'
-        err = 20 
+        err = 20
       endif
       xi_rho = dimcount
 
@@ -202,7 +205,7 @@ CONTAINS
       STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
       if (STATUS .NE. NF90_NOERR) then
         write(*,*) 'Problem dimid eta_rho'
-        err = 20 
+        err = 20
       endif
       eta_rho = dimcount
 
@@ -210,7 +213,7 @@ CONTAINS
       STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
       if (STATUS .NE. NF90_NOERR) then
         write(*,*) 'Problem dimid xi_u'
-        err = 20 
+        err = 20
       endif
       xi_u = dimcount
 
@@ -218,7 +221,7 @@ CONTAINS
       STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
       if (STATUS .NE. NF90_NOERR) then
         write(*,*) 'Problem dimid eta_u'
-        err = 20 
+        err = 20
       endif
       eta_u = dimcount
 
@@ -226,7 +229,7 @@ CONTAINS
       STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
       if (STATUS .NE. NF90_NOERR) then
         write(*,*) 'Problem dimid xi_v'
-        err = 20 
+        err = 20
       endif
       xi_v = dimcount
 
@@ -234,7 +237,7 @@ CONTAINS
       STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
       if (STATUS .NE. NF90_NOERR) then
         write(*,*) 'Problem dimid eta_v'
-        err = 20 
+        err = 20
       endif
       eta_v = dimcount
 
@@ -243,17 +246,17 @@ CONTAINS
       ALLOCATE (mask_rho(xi_rho,eta_rho),STAT=STATUS)
       if(STATUS /= 0) then
         write(*,*) 'Problem allocating mask_rho'
-        err = 30 
+        err = 30
       endif
       ALLOCATE (mask_u(xi_u,eta_u),STAT=STATUS)
       if(STATUS /= 0) then
         write(*,*) 'Problem allocating mask_u'
-        err = 30 
+        err = 30
       endif
       ALLOCATE (mask_v(xi_v,eta_v),STAT=STATUS)
       if(STATUS /= 0) then
         write(*,*) 'Problem allocating mask_v'
-        err = 30 
+        err = 30
       endif
 
     ! READ IN DATA FROM NETCDF FILE TO VARIABLES
@@ -263,7 +266,7 @@ CONTAINS
       STATUS = NF90_GET_VAR(GF_ID,VID,mask_rho)
       if (STATUS .NE. NF90_NOERR) then
         write(*,*) 'Problem read mask_rho'
-        err = 40 
+        err = 40
       endif
 
       ! u grid mask
@@ -271,7 +274,7 @@ CONTAINS
       STATUS = NF90_GET_VAR(GF_ID,VID,mask_u)
       if(STATUS .NE. NF90_NOERR) then
         write(*,*)'Problem read mask_u'
-        err = 40 
+        err = 40
       endif
 
       ! v grid mask
@@ -279,7 +282,7 @@ CONTAINS
       STATUS = NF90_GET_VAR(GF_ID,VID,mask_v)
       if(STATUS .NE. NF90_NOERR) then
         write(*,*)'Problem read mask_v'
-        err = 40 
+        err = 40
       endif
 
     STATUS = NF90_CLOSE(GF_ID)
@@ -288,8 +291,116 @@ CONTAINS
       err = 50
     endif
 
+  endif ! ROMS Specific Grid Setup
 
+!
+! TBK Start
+!
+  if (MODELTYPE .EQ. 2) then ! MITgcm specific grid setup - TBK
 
+    STATUS = NF90_INQ_DIMID(GF_ID,'xi_rho',dimid)
+    STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
+    if (STATUS .NE. NF90_NOERR) then
+      write(*,*) 'Problem dimid xi_rho'
+      err = 20
+    endif
+    xi_rho = dimcount
+
+    STATUS = NF90_INQ_DIMID(GF_ID,'eta_rho',dimid)
+    STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
+    if (STATUS .NE. NF90_NOERR) then
+      write(*,*) 'Problem dimid eta_rho'
+      err = 20
+    endif
+    eta_rho = dimcount
+
+    STATUS = NF90_INQ_DIMID(GF_ID,'xi_u',dimid)
+    STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
+    if (STATUS .NE. NF90_NOERR) then
+      write(*,*) 'Problem dimid xi_u'
+      err = 20
+    endif
+    xi_u = dimcount
+
+    STATUS = NF90_INQ_DIMID(GF_ID,'eta_u',dimid)
+    STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
+    if (STATUS .NE. NF90_NOERR) then
+      write(*,*) 'Problem dimid eta_u'
+      err = 20
+    endif
+    eta_u = dimcount
+
+    STATUS = NF90_INQ_DIMID(GF_ID,'xi_v',dimid)
+    STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
+    if (STATUS .NE. NF90_NOERR) then
+      write(*,*) 'Problem dimid xi_v'
+      err = 20
+    endif
+    xi_v = dimcount
+
+    STATUS = NF90_INQ_DIMID(GF_ID,'eta_v',dimid)
+    STATUS = NF90_INQUIRE_DIMENSION(GF_ID,dimid,len=dimcount)
+    if (STATUS .NE. NF90_NOERR) then
+      write(*,*) 'Problem dimid eta_v'
+      err = 20
+    endif
+    eta_v = dimcount
+
+  ! ALLOCATE VARIABLE ARRAY DIMENSIONS
+
+    ALLOCATE (mask_rho(xi_rho,eta_rho),STAT=STATUS)
+    if(STATUS /= 0) then
+      write(*,*) 'Problem allocating mask_rho'
+      err = 30
+    endif
+    ALLOCATE (mask_u(xi_u,eta_u),STAT=STATUS)
+    if(STATUS /= 0) then
+      write(*,*) 'Problem allocating mask_u'
+      err = 30
+    endif
+    ALLOCATE (mask_v(xi_v,eta_v),STAT=STATUS)
+    if(STATUS /= 0) then
+      write(*,*) 'Problem allocating mask_v'
+      err = 30
+    endif
+
+  ! READ IN DATA FROM NETCDF FILE TO VARIABLES
+
+    ! rho grid mask
+    STATUS = NF90_INQ_VARID(GF_ID,'mask_rho',VID)
+    STATUS = NF90_GET_VAR(GF_ID,VID,mask_rho)
+    if (STATUS .NE. NF90_NOERR) then
+      write(*,*) 'Problem read mask_rho'
+      err = 40
+    endif
+
+    ! u grid mask
+    STATUS = NF90_INQ_VARID(GF_ID,'mask_u',VID)
+    STATUS = NF90_GET_VAR(GF_ID,VID,mask_u)
+    if(STATUS .NE. NF90_NOERR) then
+      write(*,*)'Problem read mask_u'
+      err = 40
+    endif
+
+    ! v grid mask
+    STATUS = NF90_INQ_VARID(GF_ID,'mask_v',VID)
+    STATUS = NF90_GET_VAR(GF_ID,VID,mask_v)
+    if(STATUS .NE. NF90_NOERR) then
+      write(*,*)'Problem read mask_v'
+      err = 40
+    endif
+
+  STATUS = NF90_CLOSE(GF_ID)
+  if(STATUS /= NF90_NOERR) then
+    write(*,*)'Problem closing GF_ID'
+    err = 50
+  endif
+
+endif ! MITGCM Specific Grid Setup
+
+!
+! TBK End
+!
 
   ! ********************** MAKE GRID FILE **********************
 
@@ -355,4 +466,4 @@ CONTAINS
 
   END SUBROUTINE gridData
 
-END MODULE PARAM_MOD 
+END MODULE PARAM_MOD
