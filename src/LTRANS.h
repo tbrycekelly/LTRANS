@@ -5,6 +5,8 @@
 !NOTE: variables in a namelist can NOT be dynamic variables!!!!!
 !      dynamic namelists are NOT yet supported in FORTRAN90/95 standard
 !
+!Basically, this file replaces GRID.inc and LTRANS.inc in previous code
+!
 
 !--these are the grid dimension definitions, they should read from GRID.data
 
@@ -33,11 +35,17 @@
 
 
 
+
+
 !The following used to be in LTRANS.inc:
+
+
 !*** NUMBER OF PARTICLES ***
 
   INTEGER :: numpar
+
   namelist/numparticles/numpar      ! Number of particles
+
 
 
 !*** TIME PARAMETERS ***
@@ -121,6 +129,7 @@
   DOUBLE PRECISION :: Swimdepth     ! Depth at which fish swims during flood time
                                     ! in meters above bottom (this should be a positive value)
 
+
   namelist/behavparam/Behavior,OpenOceanBoundary,mortality,deadage,pediage,swimstart,swimslow,swimfast,Sgradient,sink,Hswimspeed,Swimdepth
 
 
@@ -170,7 +179,7 @@
 
 !*** INPUT FILE NAME AND LOCATION PARAMETERS ***;
 
-!  ** Model NetCDF Model Grid file **
+!  ** ROMS NetCDF Model Grid file **
   CHARACTER(LEN=200) :: NCgridfile
     !Note: the path to the file is necessary if the file is not in the same folder as the code
     !Note: if .nc file in separate folder in Linux, then include path. For example:
@@ -182,16 +191,22 @@
 
 
 
-!  ** Model Predictions NetCDF Input File **
+!  ** ROMS Predictions NetCDF Input File **
 !  Filename = prefix + filenum + suffix
-  INTEGER :: modeltype              ! TBK
+  INTEGER :: modeltype
   CHARACTER(LEN=200) :: prefix      ! NetCDF Input Filename prefix
   CHARACTER(LEN=200) :: suffix      ! NetCDF Input Filename suffix
   INTEGER :: filenum                ! Number in First NetCDF Input Filename
   INTEGER :: numdigits              ! Number of digits in number portion of file name (with leading zeros)
   LOGICAL :: startfile              ! .TRUE. means the first file has an additional time step
+  !Note: the path to the file is necessary if the file is not in the same folder as the code
+  !Note: if .nc file in separate folder in Windows, then include path in prefix. For example:
+  !      CHARACTER(LEN=15), PARAMETER :: prefix='D:\ROMS\y95hdr_'
+  !      if .nc file in separate folder in Linux, then include path in prefix. For example:
+  !      CHARACTER(LEN=26), PARAMETER :: prefix='/share/lzhong/1995/y95hdr_'
 
   namelist/modeloutput/modeltype,prefix,suffix,filenum,numdigits,startfile
+
 
 
 

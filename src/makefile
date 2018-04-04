@@ -64,11 +64,11 @@ HDF5 := on
 # End of user-defined options. Nothing should be changed below this point =
 #==========================================================================
 
-OBJS          = gridcell_module.o interpolation_module.o parameter_module.o \
-				point_in_polygon_module.o random_module.o tension_module.o  \
-				conversion_module.o hydrodynamic_module.o norm_module.o     \
-				boundary_module.o hor_turb_module.o settlement_module.o     \
-				ver_turb_module.o behavior_module.o
+OBJS          = ./src/gridcell_module.o ./src/interpolation_module.o ./src/parameter_module.o \
+				./src/point_in_polygon_module.o ./src/random_module.o ./src/tension_module.o  \
+				./src/conversion_module.o ./src/hydrodynamic_module.o ./src/norm_module.o     \
+				./src/boundary_module.o ./src/hor_turb_module.o ./src/settlement_module.o     \
+				./src/ver_turb_module.o ./src/behavior_module.o
 
 ifdef HDF5
    ifdef PGI_USGS
@@ -83,7 +83,7 @@ endif
 
 LTRANS : $(OBJS)
 	@echo "  Compiling LTRANS.f90"
-	@$(FC) $(FFLAGS) -o LTRANS.exe LTRANS.f90 $(OBJS) $(LIBS)
+	@$(FC) $(FFLAGS) -o LTRANS.exe ./src/LTRANS.f90 $(OBJS) $(LIBS)
 	@\rm *.o *.mod
 	@echo "  "
 	@echo "  Compilation Successfully Completed"
@@ -91,7 +91,7 @@ LTRANS : $(OBJS)
 
 %.o: %.f90
 	@echo "  Compiling $<"
-	@$(FC) $(FFLAGS) -c $<
+	@$(FC) $(FFLAGS) -c $< -o $<
 
 clean:
 	\rm *.o *.mod LTRANS.exe
